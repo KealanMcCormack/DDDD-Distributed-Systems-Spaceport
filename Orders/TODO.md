@@ -1,0 +1,5 @@
+- [ ] MongoDB Database
+- [ ] Actor System to talk between services
+    - [ ] Receive Order & Create Transaction
+        - [ ] put into DB (REST)
+    - [ ] Handle currency IG (i dont fucking know)
