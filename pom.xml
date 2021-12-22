@@ -8,5 +8,6 @@
     <modules>
         <module>core</module>
         <module>client</module>
+        <module>Orders</module>
     </modules>
 </project>
