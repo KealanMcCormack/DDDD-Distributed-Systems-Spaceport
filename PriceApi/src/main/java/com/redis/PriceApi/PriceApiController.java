@@ -16,9 +16,9 @@ public class PriceApiController {
     ItemRepository itemRepository;
 
     @GetMapping("/price/{item}")
-    double oneItem(@PathVariable("item") String item) {
-        if(itemRepository.findById(item).isPresent()){
-            return itemRepository.findById(item).get().getPrice();
+    double oneItem(@PathVariable("item") String itemName) {
+        if(itemRepository.findById(itemName).isPresent()){
+            return itemRepository.findById(itemName).get().getPrice();
         }
 
         return -1.0;
