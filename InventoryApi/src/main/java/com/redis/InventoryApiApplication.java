@@ -6,10 +6,10 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 
 @SpringBootApplication
 @EnableRedisRepositories
-public class PriceApiApplication {
+public class InventoryApiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PriceApiApplication.class, args);
+		SpringApplication.run(InventoryApiApplication.class, args);
 	}
 
 }

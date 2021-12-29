@@ -16,6 +16,6 @@ import java.io.Serializable;
 @Setter
 public class Item implements Serializable {
     @Id private String name;
-    private double price;
+    private double amount;
 
 }

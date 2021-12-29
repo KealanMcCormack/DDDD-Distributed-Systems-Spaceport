@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dddd.space-port</groupId>
-	<artifactId>PriceApi</artifactId>
+	<artifactId>InventoryApi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>PriceApi</name>
-	<description>Api for pricing info</description>
+	<name>InventoryApi</name>
+	<description>Api for inventory info</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

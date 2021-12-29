@@ -1,4 +1,4 @@
-package com.redis.PriceApi;
+package com.redis.InventoryApi;
 
 import com.redis.dao.Item;
 import com.redis.repository.ItemRepository;
