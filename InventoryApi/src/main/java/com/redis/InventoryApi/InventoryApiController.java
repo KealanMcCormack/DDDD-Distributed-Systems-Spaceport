@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/inventory")
 public class InventoryApiController {
 
     final Logger logger = LoggerFactory.getLogger(InventoryApiController.class);
@@ -19,7 +20,7 @@ public class InventoryApiController {
     @Autowired
     ItemRepository itemRepository;
 
-    @GetMapping("/inventory/{item}")
+    @GetMapping("/{item}")
     double oneItem(@PathVariable("item") String itemName) {
         logger.info("Request for item : " + itemName);
         if(itemRepository.findById(itemName).isPresent()){
@@ -30,32 +31,20 @@ public class InventoryApiController {
         return -1.0;
     }
 
-    @GetMapping("/inventory/items")
+    @GetMapping("/items")
     Iterable<Item> all() {
         logger.info("Request to return all");
         return itemRepository.findAll();
     }
 
-    @GetMapping("/price/browse")
-    Iterable<Item> page(@RequestParam() int page, @RequestParam() int max) {
-        logger.info("Request for pages : " + page + " with max : " + max);
-        Iterable<Item> itemIterable = itemRepository.findAll();
-        List<Item> result = IterableUtils.toList(itemIterable);
-        if(result.size() > (page * max) + max && (page * max) >= 0){
-            return result.subList((page * max), (page * max) + max);
-        }
-        logger.warn("Requested pages out of scope");
-        return null;
-    }
-
-    @PostMapping("/inventory/add")
+    @PostMapping("/add")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void addItem(@RequestBody Item item){
         logger.info("Adding new item : " + item.getName());
         itemRepository.save(item);
     }
 
-    @PostMapping("/inventory/delete")
+    @PostMapping("/delete")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void removeItem(@RequestBody Item item){
         logger.info("Deleting item : " + item.getName());
