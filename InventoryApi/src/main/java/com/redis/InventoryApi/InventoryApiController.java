@@ -12,25 +12,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class PriceApiController {
+public class InventoryApiController {
 
-    final Logger logger = LoggerFactory.getLogger(PriceApiController.class);
+    final Logger logger = LoggerFactory.getLogger(InventoryApiController.class);
 
     @Autowired
     ItemRepository itemRepository;
 
-    @GetMapping("/price/{item}")
+    @GetMapping("/inventory/{item}")
     double oneItem(@PathVariable("item") String itemName) {
-        logger.info("Request for price of item : " + itemName);
+        logger.info("Request for item : " + itemName);
         if(itemRepository.findById(itemName).isPresent()){
-            logger.info("Item price found for : " + itemName);
-            return itemRepository.findById(itemName).get().getPrice();
+            logger.info("Item amount found for : " + itemName);
+            return itemRepository.findById(itemName).get().getAmount();
         }
-        logger.warn("Price for item : " + itemName + " couldn't be found");
+        logger.warn("Amount of item : " + itemName + " couldn't be found");
         return -1.0;
     }
 
-    @GetMapping("/price/browse/all")
+    @GetMapping("/inventory/items")
     Iterable<Item> all() {
         logger.info("Request to return all");
         return itemRepository.findAll();
@@ -43,21 +43,19 @@ public class PriceApiController {
         List<Item> result = IterableUtils.toList(itemIterable);
         if(result.size() > (page * max) + max && (page * max) >= 0){
             return result.subList((page * max), (page * max) + max);
-        } else if(result.size() > (page * max) && (page * max) >= 0){
-            return result.subList((page * max), result.size() - 1);
         }
         logger.warn("Requested pages out of scope");
         return null;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/inventory/add")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void addItem(@RequestBody Item item){
         logger.info("Adding new item : " + item.getName());
         itemRepository.save(item);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/inventory/delete")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void removeItem(@RequestBody Item item){
         logger.info("Deleting item : " + item.getName());
