@@ -2,7 +2,7 @@ package actor;
 
 import akka.actor.AbstractActor;
 import database.TransactionDatabase;
-import message.OrderRequest;
+import messages.OrderRequest;
 
 public class OrderActor extends AbstractActor{
 
