@@ -11,5 +11,6 @@
         <module>PriceApi</module>
         <module>Orders</module>
         <module>InventoryApi</module>
+        <module>Market</module>
     </modules>
 </project>
