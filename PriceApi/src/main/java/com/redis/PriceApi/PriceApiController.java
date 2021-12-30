@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/price")
 public class PriceApiController {
 
     final Logger logger = LoggerFactory.getLogger(PriceApiController.class);
@@ -19,7 +20,7 @@ public class PriceApiController {
     @Autowired
     ItemRepository itemRepository;
 
-    @GetMapping("/price/{item}")
+    @GetMapping("/{item}")
     double oneItem(@PathVariable("item") String itemName) {
         logger.info("Request for price of item : " + itemName);
         if(itemRepository.findById(itemName).isPresent()){
@@ -30,13 +31,13 @@ public class PriceApiController {
         return -1.0;
     }
 
-    @GetMapping("/price/browse/all")
+    @GetMapping("/browse/all")
     Iterable<Item> all() {
         logger.info("Request to return all");
         return itemRepository.findAll();
     }
 
-    @GetMapping("/price/browse")
+    @GetMapping("/browse")
     Iterable<Item> page(@RequestParam() int page, @RequestParam() int max) {
         logger.info("Request for pages : " + page + " with max : " + max);
         Iterable<Item> itemIterable = itemRepository.findAll();
