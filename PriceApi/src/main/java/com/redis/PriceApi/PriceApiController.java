@@ -42,13 +42,27 @@ public class PriceApiController {
         logger.info("Request for pages : " + page + " with max : " + max);
         Iterable<Item> itemIterable = itemRepository.findAll();
         List<Item> result = IterableUtils.toList(itemIterable);
-        if(result.size() > (page * max) + max && (page * max) >= 0){
-            return result.subList((page * max), (page * max) + max);
-        } else if(result.size() > (page * max) && (page * max) >= 0){
-            return result.subList((page * max), result.size() - 1);
+        if(result.size() > (page * max) && (page * max) >= 0){
+            int offset = calcOffset(page, max, result.size());
+            return result.subList((page * max), (page * max) + offset);
         }
         logger.warn("Requested pages out of scope");
         return null;
+    }
+
+    int calcOffset(int page, int max, int resultSize){
+        int offset = max;
+
+        if(max < 0){
+            logger.warn("max value in request was < 0");
+            offset = 0;
+        }
+
+        if(((page * max) + max) > resultSize){
+            offset = resultSize - (page * max);
+        }
+
+        return offset;
     }
 
     @PostMapping("/add")
