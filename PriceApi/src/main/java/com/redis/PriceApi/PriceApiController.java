@@ -33,20 +33,21 @@ public class PriceApiController {
 
     @GetMapping("/browse/all")
     Iterable<Item> all() {
-        logger.info("Request to return all");
+        logger.info("Browse All| Request to return all");
         return itemRepository.findAll();
     }
 
     @GetMapping("/browse")
     Iterable<Item> page(@RequestParam() int page, @RequestParam() int max) {
-        logger.info("Request for pages : " + page + " with max : " + max);
+        logger.info("Browse| Request for pages : " + page + " with max : " + max);
         Iterable<Item> itemIterable = itemRepository.findAll();
         List<Item> result = IterableUtils.toList(itemIterable);
+        logger.debug("Browse| Result| Size: {}", result.size());
         if(result.size() > (page * max) && (page * max) >= 0){
             int offset = calcOffset(page, max, result.size());
             return result.subList((page * max), (page * max) + offset);
         }
-        logger.warn("Requested pages out of scope");
+        logger.warn("Browse| Requested pages out of scope");
         return null;
     }
 
