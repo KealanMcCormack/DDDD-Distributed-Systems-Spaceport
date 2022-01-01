@@ -20,4 +20,15 @@ public class PriceAPIRequests {
         return items;
     }
 
+    public static Item[] browseAll(String priceApiHost, String priceApiPort) throws RestClientException{
+
+        logger.info("Browse All| host: {}, port: {}", priceApiHost, priceApiPort);
+        RestTemplate restTemplate = new RestTemplate();
+        Item[] items =
+                restTemplate.getForObject("http://{priceApiHost}:{priceApiPort}/price/browse/all", //"http://{priceApiHost}/price/browse/all",
+                        Item[].class, priceApiHost, priceApiPort);
+
+        return items;
+    }
+
 }
