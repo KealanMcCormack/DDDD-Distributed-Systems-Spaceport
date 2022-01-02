@@ -20,22 +20,39 @@ public class MarketApiController {
     //Should take in customer id
     @PostMapping("/buy")
     String buyItem(@RequestBody Item item) {
-        if(item.getAmount() < 1 /*call to inventory http://localhost:8081/inventory/{item} */){
+
+        if(item.getName().isEmpty()) {
+            logger.info("Requested item : " + item + " doesn't exist in the inventory");
+            return "This is something we don't even know about, neat!";
+        }
+
+        if(itemAmount(item.getName()) == -1.0){
+            logger.warn("Requested item : " + item + " doesn't exist in inventory");
+            return "This item isn't in stock at the moment";
+        }
+
+        double amount = itemAmount(item.getName());
+        if(amount < 0.0 ) {
             logger.info("Requested item : " + item + " doesn't have required stocks");
             return "Sorry to say we ain't got enough a dis";
         }
 
-        // What to do if not found (-1.0 returned)
-        // minus from total - Could add method to Inventory Api
-
         // Calculate total price
         double price = itemPrice(item.getName());
-        if(price < 0){
+        if(price < 0.0){
             logger.warn("Requested item : " + item + " had a price returned < 0");
             System.out.println("Sorry, we couldn't find a price for that item. Please check back later");
         }
 
-        double totalCost = price * item.getAmount();
+        //Updating inventory database
+        final String uri = "http://localhost:8081/inventory/update";
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForObject(uri, item, String.class);
+
+
+        double totalCost = price * amount;
+
 
         //Send Order to order fulfilment ( Order Request from core )
 
@@ -48,7 +65,7 @@ public class MarketApiController {
     //Take customer id
     @PostMapping("/sell")
     String sellItem(@RequestBody Item item) {
-        //Check stock
+        //Check price
         //New item we don't recognise - what do
         //Add to total
         //Send to order fulfilment
@@ -71,6 +88,24 @@ public class MarketApiController {
         }
 
         return price;
+    }
+
+    private static double itemAmount(String itemName)
+    {
+        final String uri = "http://localhost:8081/inventory/" + itemName;
+
+        RestTemplate restTemplate = new RestTemplate();
+        double amount = -1.0;
+        String result = restTemplate.getForObject(uri, String.class);
+
+        try{
+            assert result != null;
+            amount = Double.parseDouble(result);
+        } catch(Exception e){
+            System.out.println("Item Amount failed : " + e);
+        }
+
+        return amount;
     }
 
 

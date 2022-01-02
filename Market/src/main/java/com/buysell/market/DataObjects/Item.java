@@ -13,6 +13,6 @@ import java.io.Serializable;
 @Setter
 public class Item implements Serializable {
     private String name;
-    private int amount;
+    private double amount;
 
 }
