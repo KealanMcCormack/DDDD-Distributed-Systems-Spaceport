@@ -14,10 +14,11 @@ public class InventoryAPIRequests {
      * Inventory API Amount Request
      *
      * @param item Item to get inventory amount
-     * @param inventoryApiHost Price API Host Address
-     * @param inventoryApiPort Price API Host Port
+     * @param inventoryApiHost Inventory API Host Address
+     * @param inventoryApiPort Inventory API Host Port
      * @return Array of Items
      * @throws RestClientException
+     * @throws InvalidResponseException
      */
     public static Item itemAmount(Item item, String inventoryApiHost, String inventoryApiPort)
             throws RestClientException, InvalidResponseException {
@@ -37,4 +38,26 @@ public class InventoryAPIRequests {
         }
         return item;
     }
+
+    /**
+     * Inventory API Browse All Request
+     *
+     * @param inventoryApiHost Inventory API Host Address
+     * @param inventoryApiPort Inventory API Host Port
+     * @return Array of Items
+     * @throws RestClientException
+     */
+    public static Item[] itemAmountsAll(String inventoryApiHost, String inventoryApiPort) throws RestClientException{
+
+        logger.info("Item Amount All| host: {}, port: {}", inventoryApiHost, inventoryApiPort);
+        RestTemplate restTemplate = new RestTemplate();
+        Item[] items =
+                restTemplate.getForObject("http://{inventoryApiHost}:{inventoryApiPort}/price/browse/all",
+                        Item[].class, inventoryApiHost, inventoryApiPort);
+
+        logger.info("Item Amount All| noItems: {}", items.length);
+
+        return items;
+    }
+
 }
