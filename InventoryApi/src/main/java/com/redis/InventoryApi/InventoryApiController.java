@@ -2,7 +2,6 @@ package com.redis.InventoryApi;
 
 import com.redis.dao.Item;
 import com.redis.repository.ItemRepository;
-import org.apache.commons.collections4.IterableUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Inventory API Controller used for representing the inventory of the space port.
+ */
 @RestController
 @RequestMapping("/inventory")
 public class InventoryApiController {
@@ -20,6 +22,11 @@ public class InventoryApiController {
     @Autowired
     ItemRepository itemRepository;
 
+    /**
+     * Get Mapping for retrieving amount of given item.
+     * @param itemName
+     * @return double
+     */
     @GetMapping("/{item}")
     double oneItem(@PathVariable("item") String itemName) {
         logger.info("Request for item : " + itemName);
@@ -31,12 +38,20 @@ public class InventoryApiController {
         return -1.0;
     }
 
+    /**
+     * Get Mapping for returning total list of items in inventory
+     * @return itemRepository.findAll();
+     */
     @GetMapping("/items")
     Iterable<Item> all() {
         logger.info("Request to return all");
         return itemRepository.findAll();
     }
 
+    /**
+     * Post Mapping for adding given item to the inventory.
+     * @param item
+     */
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void addItem(@RequestBody Item item){
@@ -44,6 +59,10 @@ public class InventoryApiController {
         itemRepository.save(item);
     }
 
+    /**
+     * Post Mapping for updating the price or amount of an already existing item.
+     * @param item
+     */
     @PostMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void updateItem(@RequestBody Item item){
@@ -51,6 +70,10 @@ public class InventoryApiController {
         itemRepository.save(item);
     }
 
+    /**
+     * Post Mapping for deleting given item from the inventory.
+     * @param item
+     */
     @PostMapping("/delete")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void removeItem(@RequestBody Item item){

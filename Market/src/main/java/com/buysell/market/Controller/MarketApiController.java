@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Controller for the Market API used for handling the buy and sell requests and creating orders
+ *
+ */
+
 @RestController
 @RequestMapping("/market")
 public class MarketApiController {
@@ -17,16 +22,21 @@ public class MarketApiController {
     //Notes
     // Careful about localhosts - for the moment Price is 8080, inventory is 8081
 
+    /**
+     * Post Mapping for buying an item from the inventory. /buy
+     * @param item
+     * @return null
+     */
     //Should take in customer id
     @PostMapping("/buy")
     String buyItem(@RequestBody Item item) {
 
         if(item.getName().isEmpty()) {
-            logger.info("Requested item : " + item + " doesn't exist in the inventory");
-            return "This is something we don't even know about, neat!";
+            logger.info("Requested item : " + item + " is null");
+            return "There seems to be something wrong with the name";
         }
 
-        if(itemAmount(item.getName()) == -1.0){
+        if(itemAmount(item.getName()) < 0.0){
             logger.warn("Requested item : " + item + " doesn't exist in inventory");
             return "This item isn't in stock at the moment";
         }
@@ -46,10 +56,8 @@ public class MarketApiController {
 
         //Updating inventory database
         final String uri = "http://localhost:8081/inventory/update";
-
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForObject(uri, item, String.class);
-
 
         double totalCost = price * amount;
 
@@ -62,6 +70,11 @@ public class MarketApiController {
         return null;
     }
 
+    /**
+     * Post Mapping for selling an item to the space port's inventory. /sell
+     * @param item
+     * @return null
+     */
     //Take customer id
     @PostMapping("/sell")
     String sellItem(@RequestBody Item item) {
@@ -71,6 +84,12 @@ public class MarketApiController {
         //Send to order fulfilment
         return null;
     }
+
+    /**
+     * Fetches the price of a given item.
+     * @param itemName
+     * @return double price
+     */
 
     private static double itemPrice(String itemName)
     {
@@ -89,6 +108,12 @@ public class MarketApiController {
 
         return price;
     }
+
+    /**
+     * Fetches the amount of a given item in the inventory.
+     * @param itemName
+     * @return double amount
+     */
 
     private static double itemAmount(String itemName)
     {
