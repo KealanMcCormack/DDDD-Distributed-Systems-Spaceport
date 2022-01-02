@@ -13,5 +13,6 @@
         <module>InventoryApi</module>
         <module>Market</module>
         <module>PriceMonitor</module>
+        <module>SpaceBank</module>
     </modules>
 </project>
