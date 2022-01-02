@@ -78,7 +78,7 @@ public class MarketApiController {
      */
     //Take customer id
     @PostMapping("/sell")
-    String sellItem(@RequestBody Item item) {
+    String sellItem(@RequestBody Item item, @RequestBody int customerID) {
         double price = itemPrice(item.getName());
         double amount = itemAmount(item.getName());
 
@@ -100,8 +100,6 @@ public class MarketApiController {
 
         double totalCost = price * amount;
 
-
-        //Add to total
         //Send to order fulfilment
         return null;
     }
