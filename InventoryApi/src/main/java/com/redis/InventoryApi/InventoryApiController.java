@@ -44,6 +44,13 @@ public class InventoryApiController {
         itemRepository.save(item);
     }
 
+    @PostMapping("/update")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    void updateItem(@RequestBody Item item){
+        logger.info("Update item : " + item.getName());
+        itemRepository.save(item);
+    }
+
     @PostMapping("/delete")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void removeItem(@RequestBody Item item){
