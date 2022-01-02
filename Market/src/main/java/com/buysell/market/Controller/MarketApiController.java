@@ -1,6 +1,7 @@
 package com.buysell.market.Controller;
 
 import com.buysell.market.DataObjects.Item;
+import com.buysell.market.DataObjects.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +30,7 @@ public class MarketApiController {
      */
     //Should take in customer id
     @PostMapping("/buy")
-    String buyItem(@RequestBody Item item) {
+    String buyItem(@RequestBody Item item, @RequestBody int customerID) {
 
         if(item.getName().isEmpty()) {
             logger.info("Requested item : " + item + " is null");
@@ -51,7 +52,7 @@ public class MarketApiController {
         double price = itemPrice(item.getName());
         if(price < 0.0){
             logger.warn("Requested item : " + item + " had a price returned < 0");
-            System.out.println("Sorry, we couldn't find a price for that item. Please check back later");
+            return("Sorry, we couldn't find a price for that item. Please check back later");
         }
 
         //Updating inventory database
@@ -78,8 +79,28 @@ public class MarketApiController {
     //Take customer id
     @PostMapping("/sell")
     String sellItem(@RequestBody Item item) {
-        //Check price
+        double price = itemPrice(item.getName());
+        double amount = itemAmount(item.getName());
+
+        if(price < 0.0){
+            logger.warn("Requested item : " + item + " had a price returned < 0");
+            return("Sorry, we couldn't find a price for that item. Please check back later");
+        }
+
         //New item we don't recognise - what do
+        if(itemAmount(item.getName()) < 0.0){
+            logger.warn("Requested item : " + item + " doesn't exist in inventory");
+            return "This port does not trade with this item";
+        }
+
+        //Updating inventory database
+        final String uri = "http://localhost:8081/inventory/update";
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.postForObject(uri, item, String.class);
+
+        double totalCost = price * amount;
+
+
         //Add to total
         //Send to order fulfilment
         return null;
