@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-
+/**
+ * Class representing an Item on the Market.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter

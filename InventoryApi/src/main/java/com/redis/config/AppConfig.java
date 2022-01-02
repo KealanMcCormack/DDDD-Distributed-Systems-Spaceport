@@ -11,6 +11,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.GenericToStringSerializer;
 
+/**
+ * Config for Inventory API
+ */
 @Configuration
 @EnableRedisRepositories
 @EnableConfigurationProperties(RedisProperties.class)

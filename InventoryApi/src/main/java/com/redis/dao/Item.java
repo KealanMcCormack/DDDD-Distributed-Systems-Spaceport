@@ -9,6 +9,9 @@ import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 
+/**
+ * Class representing an item in the Inventory
+ */
 @RedisHash("Item")
 @AllArgsConstructor
 @NoArgsConstructor
