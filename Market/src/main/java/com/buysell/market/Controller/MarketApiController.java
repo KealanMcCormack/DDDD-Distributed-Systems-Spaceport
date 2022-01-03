@@ -4,10 +4,7 @@ import com.buysell.market.DataObjects.Item;
 import com.buysell.market.DataObjects.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -32,7 +29,7 @@ public class MarketApiController {
     @PostMapping("/buy")
     String buyItem(@RequestBody Item item, @RequestBody int customerID) {
 
-        if(item.getName().isEmpty()) {
+        if(item.getName() != null || item.getName().isEmpty()) {
             logger.info("Requested item : " + item + " is null");
             return "There seems to be something wrong with the name";
         }
