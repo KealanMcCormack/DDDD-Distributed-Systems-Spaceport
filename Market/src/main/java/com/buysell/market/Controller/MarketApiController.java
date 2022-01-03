@@ -31,7 +31,7 @@ public class MarketApiController {
     //Should take in customer id
     @PostMapping("/buy/{customerID}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    String buyItem(@RequestBody Item item, @PathVariable int customerID) {
+    String buyItem(@RequestBody Item item, @PathVariable String customerID) {
 
         if(item == null) {
             logger.info("Market Buy| Requested item is null");
@@ -101,8 +101,9 @@ public class MarketApiController {
      * @return null
      */
     //Take customer id
-    @PostMapping("/sell")
-    String sellItem(@RequestBody Item item, @RequestBody int customerID) {
+    @PostMapping("/sell/{customerID}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    String sellItem(@RequestBody Item item, @PathVariable String customerID) {
         double price = itemPrice(item.getName());
         double amount = itemAmount(item.getName());
 
