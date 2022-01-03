@@ -19,11 +19,20 @@ services:
       - MONGODB_CONNSTRING=mongodb://AzureDiamond:hunter2@mongodb
 
   inventory-api:
-    build: ./InventoryApi
+    build: InventoryApi
+    container_name: inventory-api
     ports:
       - "8081:8081"
     expose:
       - 8081
+
+  price-api:
+    build: PriceApi
+    container_name: price-api
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
 
   mongodb:
     image: mongo:5.0
@@ -35,14 +44,10 @@ services:
     image: redis:latest
     container_name: redis-Inventory
     ports:
-      - "16379:16379"
-    expose:
-      - 16379
+      - "6379"
 
   redis-price:
     image: redis:latest
     container_name: redis-Price
     ports:
-      - "6379:6379"
-    expose:
-      - 6379
+      - "6379"
