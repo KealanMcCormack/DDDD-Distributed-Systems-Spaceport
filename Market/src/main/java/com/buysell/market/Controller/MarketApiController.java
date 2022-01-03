@@ -52,7 +52,7 @@ public class MarketApiController {
         }
 
         double amount = itemAmount(item.getName());
-        if(itemAmount(item.getName()) < 0.0){
+        if(amount < 0.0){
             logger.info("Market Buy| Requested item : {} doesn't exist in inventory", item.getName());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Item Not Found: Item not carried Inventory: \"" + item.getName() + "\""
@@ -105,21 +105,43 @@ public class MarketApiController {
         double price = itemPrice(item.getName());
         double amount = itemAmount(item.getName());
 
+        if(item == null) {
+            logger.info("Market Buy| Requested item is null");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Invalid Item: null"
+            );
+        }
+        if(item.getName() == null || item.getName().isEmpty()) {
+            logger.info("Market Buy| Requested item: {} is null", item.getName());
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Invalid Item name: \"" + item.getName() + "\""
+            );
+        }
+
+        if(item.getAmount() <= 0.0){
+            logger.info("Market Buy| Requested item amount: {} is invalid", item.getAmount());
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Invalid Item amount: " + item.getAmount()
+            );
+        }
+
         if(price < 0.0){
-            logger.warn("Requested item : " + item + " had a price returned < 0");
-            return("Sorry, we couldn't find a price for that item. Please check back later");
+            logger.warn("Market Buy| Requested item : {}, no price available", item.getName());
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Item Not Found: No Price available: \"" + item.getName() + "\""
+            );
         }
 
         //New item we don't recognise - what do
-        if(itemAmount(item.getName()) < 0.0){
-            logger.warn("Requested item : " + item + " doesn't exist in inventory");
-            return "This port does not trade with this item";
+        if(amount < 0.0){
+            logger.info("Market Buy| Requested item : {} doesn't exist in inventory", item.getName());
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Item Not Found: Item not carried Inventory: \"" + item.getName() + "\""
+            );
         }
 
         //Updating inventory database
-        final String uri = "http://localhost:8081/inventory/update";
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject(uri, item, String.class);
+        itemAmountUpdate(item);
 
         double totalCost = price * amount;
 
