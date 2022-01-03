@@ -18,7 +18,7 @@ receipts are sent to the ship captains.
 ## Technologies Used
 * REST API's with Springboot
 * Actors
-* NoSQL Databases: Reddis and MongoDB
+* NoSQL Databases: Redis and MongoDB
 * Open API/Swagger
 * Docker
 
