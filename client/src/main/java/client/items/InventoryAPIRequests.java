@@ -60,4 +60,44 @@ public class InventoryAPIRequests {
         return items;
     }
 
+    /**
+     * Inventory API Amount Request on List of Items
+     *
+     * @param items Items to get inventory amount
+     * @param inventoryApiHost Inventory API Host Address
+     * @param inventoryApiPort Inventory API Host Port
+     * @return Array of Items
+     * @throws RestClientException
+     * @throws InvalidResponseException
+     */
+    public static Item[] itemAmountsList(Item[] items, String inventoryApiHost, String inventoryApiPort)
+            throws RestClientException, InvalidResponseException {
+
+        logger.info("Item Amount List| host: {}, port: {}, items size: {}", inventoryApiHost, inventoryApiPort, items.length);
+        for (int i = 0; i < items.length; i++) {
+            items[i] = itemAmount(items[i], inventoryApiHost, inventoryApiPort);
+        }
+
+        return items;
+    }
+
+    /**
+     * Inventory API Amount Request and check has amount
+     *
+     * @param item Items to get inventory amount
+     * @param amount Amount to the item to check
+     * @param inventoryApiHost Inventory API Host Address
+     * @param inventoryApiPort Inventory API Host Port
+     * @return Array of Items
+     * @throws RestClientException
+     * @throws InvalidResponseException
+     */
+    public static boolean hasItemAmount(Item item, double amount, String inventoryApiHost, String inventoryApiPort)
+            throws RestClientException, InvalidResponseException {
+        logger.info("Has Item Amount| host: {}, port: {}, items: {}, amount: {}", inventoryApiHost, inventoryApiPort, item, amount);
+        item = itemAmount(item, inventoryApiHost, inventoryApiPort);
+
+        return item.getAmount() >= amount;
+    }
+
 }
