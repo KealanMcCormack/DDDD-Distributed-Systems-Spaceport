@@ -56,6 +56,8 @@ public class MarketApiController {
         }
 
         //Updating inventory database
+        item.setAmount(item.getAmount()*-1);
+
         final String uri = "http://localhost:8081/inventory/update";
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.postForObject(uri, item, String.class);
