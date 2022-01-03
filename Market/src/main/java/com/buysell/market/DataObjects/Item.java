@@ -17,4 +17,11 @@ public class Item implements Serializable {
     private String name;
     private double amount;
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
 }

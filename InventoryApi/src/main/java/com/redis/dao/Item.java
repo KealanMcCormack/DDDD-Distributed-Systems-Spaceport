@@ -21,4 +21,11 @@ public class Item implements Serializable {
     @Id private String name;
     private double amount;
 
+    @Override
+    public String toString() {
+        return "Item{" +
+                "name='" + name + '\'' +
+                ", amount=" + amount +
+                '}';
+    }
 }
