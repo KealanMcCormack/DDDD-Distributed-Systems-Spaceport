@@ -14,15 +14,9 @@ services:
     image: orders:latest
     container_name: orders
     ports:
-      - "8081:8081"
+      - "8082:8082"
     environment:
       - MONGODB_CONNSTRING=mongodb://AzureDiamond:hunter2@mongodb
-
-  mongodb:
-    image: mongo:5.0
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=AzureDiamond
-      - MONGO_INITDB_ROOT_PASSWORD=hunter2
 
   inventory-api:
     build: ./InventoryApi
@@ -31,6 +25,12 @@ services:
     expose:
       - 8081
 
+  mongodb:
+    image: mongo:5.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=AzureDiamond
+      - MONGO_INITDB_ROOT_PASSWORD=hunter2
+      -
   redis-inventory:
     image: redis:latest
     container_name: redis-Inventory
