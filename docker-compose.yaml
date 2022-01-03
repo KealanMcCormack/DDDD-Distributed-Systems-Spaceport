@@ -2,15 +2,15 @@ version: '3'
 
 services:
 
-  SpaceBank:
+  spacebank:
     build: ./SpaceBank
     image: spacebank:latest
-    container_name: SpaceBank
+    container_name: spacebank
     network_mode: host
     ports:
       - 8082:8082
 
-  Orders:
+  orders:
     build: ./Orders
     image: orders:latest
     container_name: orders
