@@ -30,7 +30,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=AzureDiamond
       - MONGO_INITDB_ROOT_PASSWORD=hunter2
-      -
+
   redis-inventory:
     image: redis:latest
     container_name: redis-Inventory
