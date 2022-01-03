@@ -1,6 +1,5 @@
 package client.items;
 
-import client.Client;
 import client.exceptions.InvalidResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

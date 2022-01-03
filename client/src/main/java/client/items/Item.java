@@ -69,6 +69,22 @@ public class Item implements Serializable {
                 ", amount=" + amount +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Item){
+            Item itemO = (Item) o;
+
+            return this.name.equals(itemO.name);
+        }
+
+        return super.equals(o);
+    }
+
+    public void updateAmount(double amount){
+        this.amount += amount;
+    }
+
 }
 
 
