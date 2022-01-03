@@ -8,9 +8,6 @@ import messages.Init;
 import messages.OrderRequest;
 
 public class OrderActor extends AbstractActor{
-    /*
-
-     */
 
     private TransactionDatabase transactionDatabase;
 

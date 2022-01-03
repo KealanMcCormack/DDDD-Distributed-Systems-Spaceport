@@ -17,9 +17,6 @@ import java.util.ArrayList;
  This will act as an api for the database
  */
 public class TransactionDatabase {
-    /*
-    * Find order based on ID
-     */
 
     private final MongoDatabase db;
 
