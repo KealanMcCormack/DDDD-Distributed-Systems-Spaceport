@@ -9,6 +9,13 @@ services:
     ports:
       - "8083:8083"
 
+  market:
+    build: ./Market
+    image: market:latest
+    container_name: market
+    ports:
+      - "8084:8084"
+
   orders:
     build: ./Orders
     image: orders:latest
