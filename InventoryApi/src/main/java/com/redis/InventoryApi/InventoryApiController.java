@@ -77,12 +77,9 @@ public class InventoryApiController {
             } else{
                 logger.warn("Update to item : " + item.getName() + " failed as the update would cause amount to be less than 1");
             }
-
         }else{
             logger.warn("Item : " + item.getName() + " Couldn't be updated");
         }
-
-
     }
 
     /**

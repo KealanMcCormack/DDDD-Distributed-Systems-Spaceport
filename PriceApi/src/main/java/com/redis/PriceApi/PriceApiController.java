@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/price")
@@ -71,6 +72,24 @@ public class PriceApiController {
     void addItem(@RequestBody Item item){
         logger.info("Adding new item : " + item.getName());
         itemRepository.save(item);
+    }
+
+    @PostMapping("/update")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    void updateItem(@RequestBody Item item){
+        Optional<Item> amount = itemRepository.findById(item.getName());
+        if(amount.isPresent()){
+            double newPrice = amount.get().getPrice() + item.getPrice();
+            item.setPrice(newPrice);
+            if(item.getPrice() > 0){
+                logger.info("Update item : " + item.getName());
+                itemRepository.save(item);
+            } else{
+                logger.warn("Update to item : " + item.getName() + " failed as the update would cause amount to be less than 1");
+            }
+        }else{
+            logger.warn("Item : " + item.getName() + " Couldn't be updated");
+        }
     }
 
     @PostMapping("/delete")
