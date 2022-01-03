@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Inventory API Controller used for representing the inventory of the space port.
@@ -66,8 +67,22 @@ public class InventoryApiController {
     @PostMapping("/update")
     @ResponseStatus(HttpStatus.ACCEPTED)
     void updateItem(@RequestBody Item item){
-        logger.info("Update item : " + item.getName());
-        itemRepository.save(item);
+        Optional<Item> amount = itemRepository.findById(item.getName());
+        if(amount.isPresent()){
+            double newAmount = amount.get().getAmount() + item.getAmount();
+            item.setAmount(newAmount);
+            if(item.getAmount() > 0){
+                logger.info("Update item : " + item.getName());
+                itemRepository.save(item);
+            } else{
+                logger.warn("Update to item : " + item.getName() + " failed as the update would cause amount to be less than 1");
+            }
+
+        }else{
+            logger.warn("Item : " + item.getName() + " Couldn't be updated");
+        }
+
+
     }
 
     /**
