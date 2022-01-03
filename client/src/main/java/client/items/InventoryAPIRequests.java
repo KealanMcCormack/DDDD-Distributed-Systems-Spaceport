@@ -40,7 +40,7 @@ public class InventoryAPIRequests {
     }
 
     /**
-     * Inventory API Browse All Request
+     * Inventory API Item All Request
      *
      * @param inventoryApiHost Inventory API Host Address
      * @param inventoryApiPort Inventory API Host Port

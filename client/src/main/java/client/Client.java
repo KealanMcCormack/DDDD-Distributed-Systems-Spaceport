@@ -29,6 +29,9 @@ public class Client {
             for (Item item: items){
                 System.out.println(item);
             }
+
+            Item priceItem = PriceAPIRequests.itemPrice(new Item("item"), "localhost", "8080");
+            System.out.println("Price: " + priceItem.getPrice());
         }
         catch (RestClientException e){
             logger.error("Client| Exception| msg: {}, e: {}", e.getLocalizedMessage(), e.toString());

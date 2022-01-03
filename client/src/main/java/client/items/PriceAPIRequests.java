@@ -1,6 +1,7 @@
 package client.items;
 
 import client.Client;
+import client.exceptions.InvalidResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -51,6 +52,36 @@ public class PriceAPIRequests {
         logger.info("Browse All| noItems: {}, ", items.length);
 
         return items;
+    }
+
+    /**
+     * Inventory API Price Request
+     *
+     * @param item Item to get inventory amount
+     * @param priceApiHost Price API Host Address
+     * @param priceApiPort Price API Host Port
+     * @return Array of Items
+     * @throws RestClientException
+     * @throws InvalidResponseException
+     */
+    public static Item itemPrice(Item item, String priceApiHost, String priceApiPort)
+            throws RestClientException, InvalidResponseException {
+
+        logger.info("Item Price| host: {}, port: {}, item: {}", priceApiHost, priceApiPort, item);
+        RestTemplate restTemplate = new RestTemplate();
+
+        Double price =
+                restTemplate.getForObject("http://{priceApiHost}:{priceApiHost}/price/{}}",
+                        Double.class, priceApiHost, priceApiPort, item.getName());
+
+        if (price == null){
+            throw new InvalidResponseException("Item Amount Response Null");
+        }
+        else {
+            item.setPrice(price);
+        }
+
+        return item;
     }
 
 
