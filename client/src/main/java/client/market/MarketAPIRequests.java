@@ -12,6 +12,15 @@ public class MarketAPIRequests {
 
     private final static Logger logger = LoggerFactory.getLogger(MarketAPIRequests.class);
 
+    /**
+     * Market API Buy Request
+     *
+     * @param itemName Desired item name
+     * @param amount Desired amount
+     * @param id Client ID
+     * @param uriInfo URI info for API
+     * @throws RestClientException
+     */
     public static void buy(String itemName, double amount, String id, UriInfo uriInfo)
             throws RestClientException{
         logger.info("Market Buy| uri: {}, item: {}, amount: {}, ID{}", uriInfo, itemName, amount, id);
@@ -23,6 +32,15 @@ public class MarketAPIRequests {
                 request, String.class, uriInfo.getHost(), uriInfo.getPort(), id);
     }
 
+    /**
+     * Market API Sell Request
+     *
+     * @param itemName Desired item name
+     * @param amount Desired amount
+     * @param id Client ID
+     * @param uriInfo URI info for API
+     * @throws RestClientException
+     */
     public static void sell(String itemName, double amount, String id, UriInfo uriInfo)
             throws RestClientException{
         logger.info("Market Sell| uri: {}, item: {}, amount: {}, ID{}", uriInfo, itemName, amount, id);
