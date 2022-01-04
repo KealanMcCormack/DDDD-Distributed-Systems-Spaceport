@@ -1,3 +1,5 @@
+package core;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -22,7 +24,7 @@ public class Parser {
     static void parsefile() throws FileNotFoundException {
         JSONParser jsonParser = new JSONParser();
 
-        try (FileReader reader = new FileReader("src/main/resources/items.json"))
+        try (FileReader reader = new FileReader("core/src/main/resources/items.json"))
         {
             //Read JSON file
             Object obj = jsonParser.parse(reader);
