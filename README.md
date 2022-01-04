@@ -40,6 +40,10 @@ receipts are sent to the ship captains.
     This can be used to add items to the Price and Inventory databases.
 
 
+## Video Link
+
+https://youtu.be/wYTaVPQGBuI
+
 ## Open Api Code
 
 Open API yml code is provided for the Price, Inventory and market APIs 
