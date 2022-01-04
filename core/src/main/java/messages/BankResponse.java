@@ -22,4 +22,5 @@ public class BankResponse implements Serializable {
     private String payeeID;
     private String bankTransactionID;
     private BankStatus bankTransactionStatus;
+    private String recieversRef;
 }

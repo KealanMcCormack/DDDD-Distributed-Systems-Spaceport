@@ -17,5 +17,6 @@ public class BankRequest implements Serializable {
     private String receiverId;
     private double charge;
     private String payeeID;
+    private String recieversRef;
 
 }
