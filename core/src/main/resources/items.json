@@ -1,0 +1,58 @@
+[
+  {
+    "item": {
+      "name": "iron",
+      "price": 10.0,
+      "amount": 10000000.0
+    }
+  },
+  {
+    "item": {
+      "name": "Cobalt",
+      "price": 1000.0,
+      "amount": 100000.0
+    }
+  },
+  {
+  "item": {
+      "name": "Diamond",
+      "price": 10000.0,
+      "amount": 10000.0
+    }
+  },
+  {
+    "item": {
+      "name": "Amthyst",
+      "price": 7500.0,
+      "amount": 1000.0
+    }
+  },
+  {
+    "item": {
+      "name": "steel",
+      "price": 100.0,
+      "amount": 1000000.0
+    }
+  },
+  {
+    "item": {
+      "name": "fuel",
+      "price": 821.0,
+      "amount": 100000.0
+    }
+  },
+  {
+    "item": {
+      "name": "spare parts",
+      "price": 124.0,
+      "amount": 1000.0
+    }
+  },
+  {
+    "item": {
+      "name": "teflon",
+      "price": 724.0,
+      "amount": 10000.0
+    }
+  }
+]
