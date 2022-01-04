@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: Inventory Api
+  version: 1.0.0
+servers:
+  - url: http://localhost:8081
+paths:
+  /inventory/items:
+    get:
+      tags:
+        - General
+      summary: Browse all
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /inventory/add:
+    post:
+      tags:
+        - General
+      summary: Add item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Mats
+                amount: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /inventory/delete:
+    post:
+      tags:
+        - General
+      summary: Delete Item
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Qats
+                amount: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /inventory/Qats:
+    get:
+      tags:
+        - General
+      summary: Find one
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /inventory/update:
+    post:
+      tags:
+        - General
+      summary: Update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Mats
+                amount: -10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
