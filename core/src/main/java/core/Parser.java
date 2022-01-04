@@ -111,8 +111,8 @@ public class Parser {
         InventoryItem inventoryItem = new InventoryItem(name, amount);
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject("http://price-api:8081/price/add", priceItem, String.class);
+        restTemplate.postForObject("http://localhost:8080/price/add", priceItem, String.class);
 
-        restTemplate.postForObject("http://inventory-api:8081/inventory/update", inventoryItem, String.class);
+        restTemplate.postForObject("http://localhost:8081/inventory/add", inventoryItem, String.class);
     }
 }
