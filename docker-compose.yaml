@@ -62,6 +62,8 @@ services:
     container_name: ${PRICE_MONITOR_HOST}
     ports:
       - ${PRICE_MONITOR_PORT}:${PRICE_MONITOR_PORT}
+    environment:
+      - PRICE_MONITOR_PORT=${PRICE_MONITOR_PORT}
 
   mongodb:
     image: mongo:5.0

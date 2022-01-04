@@ -34,16 +34,16 @@ public class MarketApiController {
     @Value("${inventoryPort}")
     private String inventoryPort;
 
-    @Value("${PriceMonitorHost}")
+    @Value("${priceMonitorHost}")
     private static String priceMonitorHost;
 
-    @Value("${PriceMonitorPort}")
+    @Value("${priceMonitorPort}")
     private static String priceMonitorPort;
 
-    @Value("${OrderHost}")
+    @Value("${orderHost}")
     private static String orderHost;
 
-    @Value("${OrderPort}")
+    @Value("${orderPort}")
     private static String orderPort;
 
     /**
