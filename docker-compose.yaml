@@ -21,6 +21,9 @@ services:
       INVENTORY_HOST: ${INVENTORY_HOST}
       INVENTORY_PORT: ${INVENTORY_PORT}
       MARKET_PORT: ${MARKET_PORT}
+      Price_Monitor_HOST: ${Price_Monitor_Host}
+      Price_Monitor_Port: ${Price_Monitor_Port}
+
 
 
   orders:
