@@ -23,6 +23,19 @@ receipts are sent to the ship captains.
 * Docker
 
 
+## Run Instructions
+
+1. Run "mvn clean" to clean project
+2. Run "mvn package" to create project jar file for client and containers
+3. Edit .env File to have desire configuration for container services
+4. Run "docker-compose build" to build docker images
+5. Run "docker-compose up" to run docker containers
+6. Run Client by "java -Duser.language=en -Duser.country=IE -jar client/target/client-0.0.1.jar -m {money} --id {clientID}
+7. Run "docker-compose down" to shut down docker containers
+
+##Notes
+    Configuration for Services is done through the .env
+
 
 ## Open Api Code
 
