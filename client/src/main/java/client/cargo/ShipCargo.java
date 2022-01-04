@@ -53,6 +53,15 @@ public class ShipCargo {
         }
     }
 
+    public Item getItem(String itemName){
+        if (itemName == null || !cargoMap.containsKey(itemName)){
+            return null;
+        }
+        else{
+            return cargoMap.get(itemName);
+        }
+    }
+
     @Override
     public String toString() {
         return "ShipCargo{" +
