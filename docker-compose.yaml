@@ -38,6 +38,9 @@ services:
     container_name: ${INVENTORY_HOST}
     ports:
       - ${INVENTORY_PORT}:${INVENTORY_PORT}
+    environment:
+      INVENTORY_PORT: ${INVENTORY_PORT}
+      INVENTORY_REDIS_HOST: ${INVENTORY_REDIS_HOST}
 
 
   price-api:
@@ -45,6 +48,9 @@ services:
     container_name: ${PRICE_HOST}
     ports:
       - ${PRICE_PORT}:${PRICE_PORT}
+    environment:
+      PRICE_PORT: ${PRICE_PORT}
+      PRICE_REDIS_HOST: ${PRICE_REDIS_HOST}
 
   mongodb:
     image: mongo:5.0
@@ -54,12 +60,12 @@ services:
 
   redis-inventory:
     image: redis:latest
-    container_name: redis-Inventory
+    container_name: ${INVENTORY_REDIS_HOST}
     ports:
       - "6379"
 
   redis-price:
     image: redis:latest
-    container_name: redis-Price
+    container_name: ${PRICE_REDIS_HOST}
     ports:
       - "6379"
