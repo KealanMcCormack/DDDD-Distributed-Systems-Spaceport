@@ -41,7 +41,7 @@ public class Client {
                     case "--help":
                         System.out.println(helpMessage());
                         System.exit(0);
-                    case "-id":
+                    case "--id":
                         if (i + 1 < args.length) {
                             id = args[++i];
                             break;
@@ -227,8 +227,13 @@ public class Client {
     }
 
     public static String helpMessage(){
-        //TODO
-        return "TODO";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Client Help:\n");
+        stringBuilder.append("Client shops at the Space Port to complete its shopping list\n");
+        stringBuilder.append("Flags:\n\t--help \t Returns help message\n" +
+                "\t--money, -m <money-value>\t Set Clients starting money, Default: 1000\n"+
+                "\t--id <client-id>\t Set Clients client-id, Default: \"1234\"\n");
+        return stringBuilder.toString();
     }
 
 
