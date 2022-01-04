@@ -44,6 +44,12 @@ services:
     expose:
       - 8080
 
+  pricemonitor:
+    build: PriceMonitor
+    container_name: price-monitor
+    ports:
+      - "9000:9000"
+
   mongodb:
     image: mongo:5.0
     environment:
