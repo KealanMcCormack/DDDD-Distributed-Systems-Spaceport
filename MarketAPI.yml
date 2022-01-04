@@ -1,0 +1,35 @@
+openapi: 3.0.0
+info:
+  title: Market Api
+  version: 1.0.0
+servers:
+  - url: http://localhost:8084
+paths:
+  /market/buy/1:
+    post:
+      tags:
+        - General
+      summary: Market buy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: teflon
+                amount: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /market/sell/1:
+    get:
+      tags:
+        - General
+      summary: Market sell
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
