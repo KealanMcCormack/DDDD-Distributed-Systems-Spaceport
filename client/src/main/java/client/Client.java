@@ -3,18 +3,15 @@ package client;
 
 import client.cargo.ShipCargo;
 import client.items.InventoryAPIRequests;
-import client.items.PriceAPIRequests;
 import client.items.Item;
+import client.items.PriceAPIRequests;
 import client.market.MarketAPIRequests;
 import client.shoppinglist.ShoppingList;
 import client.uri.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.client.RestClientException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -27,35 +24,88 @@ public class Client {
     private static final Logger logger = LoggerFactory.getLogger(Client.class);
 
     private final String clientID;
-    private ShipCargo shipCargo;
-
-    private Map<String, UriInfo> uriMap;
-
+    private final ShipCargo shipCargo;
+    private final Map<String, UriInfo> uriMap;
     private double balance;
 
 
 
     public static void main(String[] args) {
-        Item[] items;
+        String id = "1234";
+        double money = 1000;
         try {
-            System.out.println("testing method");
 
-
-            //items = Browse.browseAll("localhost", "8080");
-            /*
-            items = PriceAPIRequests.browse(0, 20, "localhost", "8080");
-
-            for (Item item: items){
-                System.out.println(item);
+            // Flag parsing
+            for (int i = 0; i < args.length; i++) {
+                switch (args[i]) {
+                    case "--help":
+                        System.out.println(helpMessage());
+                        System.exit(0);
+                    case "-id":
+                        if (i + 1 < args.length) {
+                            id = args[++i];
+                            break;
+                        }
+                        else{
+                            logger.error("Client| No ID argument provided for -id flag| args: {}", Arrays.toString(args));
+                            System.out.println(helpMessage());
+                            System.exit(0);
+                        }
+                    case "--money":
+                    case "-m":
+                        if (i + 1 < args.length) {
+                            try {
+                                money = Double.parseDouble(args[++i]);
+                            }
+                            catch (NumberFormatException e){
+                                logger.error("Client| Money argument provided is not double| arg: {}, args: {}", args[i], Arrays.toString(args));
+                                System.out.println(helpMessage());
+                                System.exit(0);
+                            }
+                            break;
+                        }
+                        else{
+                            logger.error("Client| No money argument provided for --money flag| args: {}", Arrays.toString(args));
+                            System.out.println(helpMessage());
+                            System.exit(0);
+                        }
+                    default:
+                        logger.error("Client| Unexpected arg: {}, args: {}", args[i], Arrays.toString(args));
+                        System.out.println(helpMessage());
+                        System.exit(0);
+                }
             }
 
-            Item priceItem = PriceAPIRequests.itemPrice(new Item("item"), "localhost", "8080");
-            System.out.println("Price: " + priceItem.getPrice());*/
-        }
-        catch (RestClientException e){
-            logger.error("Client| Exception| msg: {}, e: {}", e.getLocalizedMessage(), e.toString());
+            Map<String, UriInfo> uriMap = new HashMap<>();
+            uriMap.put("priceAPI", new UriInfo("localhost", "8080"));
+            uriMap.put("inventoryAPI", new UriInfo("localhost", "8081"));
+            uriMap.put("marketAPI", new UriInfo("localhost", "8082"));
+
+            ShipCargo cargo = new ShipCargo();
+            cargo.add(new Item("iron", -1, 5));
+            cargo.add(new Item("cheese", -1, 2));
+
+
+            Client client = new Client(id, cargo, money, uriMap);
+
+            Map<String, Item> shopMap = new HashMap<>();
+            shopMap.put("iron", new Item("iron", 2, -3));
+            shopMap.put("steel", new Item("steel", 3, 6));
+            ShoppingList shopList = new ShoppingList(shopMap);
+
+            List<Item> unattainedItems = client.shop(shopList);
+
+            //Print
+            System.out.println("Unattained Items: " + unattainedItems);
+
+            System.out.println(client);
+
 
         }
+        catch (Exception e){
+            logger.error("Client| Exception| msg: {}, e: {}", e.getLocalizedMessage(), e.toString());
+        }
+
 
     }
 
@@ -70,6 +120,13 @@ public class Client {
         assert this.uriMap.containsKey("marketAPI");
     }
 
+    /**
+     * Client method to Buy and Sell to the Space Port based on Shopping List
+     *
+     * @param shoppingList shopping list of Items to buy
+     * @return List of unattained Items
+     * @throws InterruptedException
+     */
     public List<Item> shop(ShoppingList shoppingList) throws InterruptedException {
         List<Item> unattainedItems = new ArrayList<>();
 
@@ -103,13 +160,20 @@ public class Client {
                                 logger.info("Client Shop Buy| Buying {}, amount: {}, price: {}, cost: {}| Desired item: {}",
                                         desiredItem.getName(), buyAmount, offeredPrice, buyAmount * offeredPrice, desiredItem);
                                 shoppingList.updateListItem(buyAmount * -1, desiredItem.getName());
+                                if (shipCargo.getItem(desiredItem.getName()) != null){
+                                    shipCargo.updateAmount(buyAmount, desiredItem.getName());
+                                }
+                                else{
+                                    shipCargo.add(new Item(desiredItem.getName(), -1, buyAmount));
+                                }
+
                                 balance -= buyAmount * offeredPrice;
                             } else {
                                 logger.warn("Client Shop Buy| No availability of item type to buy| Desired item: {}", desiredItem);
                                 unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
                             }
                         }
-                    } else if (shipCargo.getItem(desiredItem.getName()).getAmount() > 0) {
+                    } else if (shipCargo.getItem(desiredItem.getName()) != null && shipCargo.getItem(desiredItem.getName()).getAmount() > 0) {
                         if (offeredPrice < desiredItem.getPrice()) {
                             logger.warn("Client Shop Sell| Offered price too low| Desired item: {}, Offered Price: {}", desiredItem, offeredPrice);
                             unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
@@ -121,6 +185,7 @@ public class Client {
                             logger.info("Client Shop Sell| Selling {}, amount: {}, price: {}, profit: {}| Desired item: {}",
                                     desiredItem.getName(), sellAmount, offeredPrice, sellAmount * offeredPrice, desiredItem);
                             shoppingList.updateListItem(sellAmount, desiredItem.getName());
+                            shipCargo.updateAmount(-1*sellAmount, desiredItem.getName());
                             balance += sellAmount * offeredPrice;
                         }
                     } else{
@@ -137,6 +202,21 @@ public class Client {
             wait(1000);
         }
         return unattainedItems;
+    }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "clientID='" + clientID + '\'' +
+                ", shipCargo=" + shipCargo +
+                ", uriMap=" + uriMap +
+                ", balance=" + balance +
+                '}';
+    }
+
+    public static String helpMessage(){
+        //TODO
+        return "TODO";
     }
 
 
