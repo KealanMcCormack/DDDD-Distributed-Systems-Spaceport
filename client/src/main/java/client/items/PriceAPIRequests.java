@@ -1,15 +1,15 @@
 package client.items;
 
 import client.exceptions.InvalidResponseException;
+import client.uri.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 public class PriceAPIRequests {
 
-    private static Logger logger = LoggerFactory.getLogger(PriceAPIRequests.class);
+    private final static Logger logger = LoggerFactory.getLogger(PriceAPIRequests.class);
 
 
     /**
@@ -17,17 +17,16 @@ public class PriceAPIRequests {
      *
      * @param pageNo Page No.
      * @param maxPageLength Max length of page
-     * @param priceApiHost Price API Host Address
-     * @param priceApiPort Price API Host Port
+     * @param uriInfo URI info for API
      * @return Array of Items
      * @throws RestClientException
      */
-    public static Item[] browse(int pageNo, int maxPageLength, String priceApiHost, String priceApiPort) throws RestClientException {
-        logger.info("Browse| host: {}, port: {}, pageNo: {}, max: {}", priceApiHost, priceApiPort, pageNo, maxPageLength);
+    public static Item[] browse(int pageNo, int maxPageLength, UriInfo uriInfo) throws RestClientException {
+        logger.info("Browse| uri: {}, pageNo: {}, max: {}", uriInfo, pageNo, maxPageLength);
         RestTemplate restTemplate = new RestTemplate();
         Item[] items =
                 restTemplate.getForObject("http://{priceApiHost}:{priceApiPort}/price/browse?page={pageNo}&max={maxPageLength}",
-                        Item[].class, priceApiHost, priceApiPort,  pageNo, maxPageLength);
+                        Item[].class, uriInfo.getHost(), uriInfo.getPort(),  pageNo, maxPageLength);
 
         return items;
     }
@@ -35,18 +34,17 @@ public class PriceAPIRequests {
     /**
      * Price API Browse All Request
      *
-     * @param priceApiHost Price API Host Address
-     * @param priceApiPort Price API Host Port
+     * @param uriInfo URI info for API
      * @return Array of Items
      * @throws RestClientException
      */
-    public static Item[] browseAll(String priceApiHost, String priceApiPort) throws RestClientException{
+    public static Item[] browseAll(UriInfo uriInfo) throws RestClientException{
 
-        logger.info("Browse All| host: {}, port: {}", priceApiHost, priceApiPort);
+        logger.info("Browse All| uri: {}", uriInfo);
         RestTemplate restTemplate = new RestTemplate();
         Item[] items =
                 restTemplate.getForObject("http://{priceApiHost}:{priceApiPort}/price/browse/all",
-                        Item[].class, priceApiHost, priceApiPort);
+                        Item[].class, uriInfo.getHost(), uriInfo.getPort());
 
         logger.info("Browse All| noItems: {}, ", items.length);
 
@@ -57,40 +55,26 @@ public class PriceAPIRequests {
      * Inventory API Price Request
      *
      * @param item Item to get inventory amount
-     * @param priceApiHost Price API Host Address
-     * @param priceApiPort Price API Host Port
+     * @param uriInfo URI info for API
      * @return Array of Items
      * @throws RestClientException
      * @throws InvalidResponseException
      */
-    public static Item itemPrice(Item item, String priceApiHost, String priceApiPort)
+    public static double itemPrice(Item item, UriInfo uriInfo)
             throws RestClientException, InvalidResponseException {
 
-        logger.info("Item Price| host: {}, port: {}, item: {}", priceApiHost, priceApiPort, item);
+        logger.info("Item Price| uri: {}, item: {}", uriInfo, item);
         RestTemplate restTemplate = new RestTemplate();
 
         Double price =
                 restTemplate.getForObject("http://{priceApiHost}:{priceApiHost}/price/{}}",
-                        Double.class, priceApiHost, priceApiPort, item.getName());
+                        Double.class, uriInfo.getHost(), uriInfo.getPort(), item.getName());
 
         if (price == null){
             throw new InvalidResponseException("Item Amount Response Null");
         }
-        else {
-            item.setPrice(price);
-        }
 
-        return item;
-    }
-
-
-    public static void add(Item item, String priceApiHost, String priceApiPort) throws RestClientException{
-        logger.info("Add Item| item:{}, host: {}, port: {}", item, priceApiHost, priceApiPort);
-        RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<Item> request = new HttpEntity<>(item);
-
-        restTemplate.postForObject("http://{priceApiHost}:{priceApiPort}/price/add",
-                request, void.class, priceApiHost, priceApiPort);
+        return price;
     }
 
 }
