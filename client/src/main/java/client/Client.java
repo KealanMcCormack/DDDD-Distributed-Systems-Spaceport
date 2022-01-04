@@ -41,7 +41,7 @@ public class Client {
                     case "--help":
                         System.out.println(helpMessage());
                         System.exit(0);
-                    case "-id":
+                    case "--id":
                         if (i + 1 < args.length) {
                             id = args[++i];
                             break;
@@ -79,18 +79,19 @@ public class Client {
             Map<String, UriInfo> uriMap = new HashMap<>();
             uriMap.put("priceAPI", new UriInfo("localhost", "8080"));
             uriMap.put("inventoryAPI", new UriInfo("localhost", "8081"));
-            uriMap.put("marketAPI", new UriInfo("localhost", "8082"));
+            uriMap.put("marketAPI", new UriInfo("localhost", "8084"));
 
             ShipCargo cargo = new ShipCargo();
-            cargo.add(new Item("iron", -1, 5));
-            cargo.add(new Item("cheese", -1, 2));
+            cargo.add(new Item("iron", -1, 50));
+            cargo.add(new Item("cheese", -1, 20));
 
 
             Client client = new Client(id, cargo, money, uriMap);
 
             Map<String, Item> shopMap = new HashMap<>();
-            shopMap.put("iron", new Item("iron", 2, -3));
-            shopMap.put("steel", new Item("steel", 3, 6));
+            shopMap.put("aaaaa", new Item("aaaaa", 120, 6));
+            shopMap.put("iron", new Item("iron", 6, -3));
+            shopMap.put("steel", new Item("steel", 120, 6));
             ShoppingList shopList = new ShoppingList(shopMap);
 
             List<Item> unattainedItems = client.shop(shopList);
@@ -134,18 +135,26 @@ public class Client {
 
         while (!shoppingList.listComplete()){
 
-            for (Item desiredItem: shoppingList.getDesiredItems()) {
+            Iterator<Map.Entry<String, Item>> entryIterator = shoppingList.getDesiredItemsIterator();
+            //Iterator<Item> itemIterator = shoppingList.getDesiredItems().iterator();
+            //for (Item desiredItem: shoppingList.getDesiredItems().) {
+            while (entryIterator.hasNext()){
+                Map.Entry<String, Item> next = entryIterator.next();
+                Item desiredItem = next.getValue();
                 double offeredPrice = PriceAPIRequests.itemPrice(desiredItem, uriMap.get("priceAPI"));
                 if (offeredPrice > 0) {
 
                     if (desiredItem.getAmount() > 0) {
                         if (offeredPrice > desiredItem.getPrice()) {
                             logger.warn("Client Shop Buy| Offered price too expensive| Desired item: {}, Offered Price: {}", desiredItem, offeredPrice);
-                            unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+
+                            unattainedItems.add(desiredItem);
+                            entryIterator.remove();
                         }
                         else if(balance <= 0){
                             logger.warn("Client Shop Buy| Out of Funds| Desired item: {}", desiredItem);
-                            unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+                            unattainedItems.add(desiredItem);
+                            entryIterator.remove();
                         }
                         else {
 
@@ -170,16 +179,18 @@ public class Client {
                                 balance -= buyAmount * offeredPrice;
                             } else {
                                 logger.warn("Client Shop Buy| No availability of item type to buy| Desired item: {}", desiredItem);
-                                unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+                                unattainedItems.add(desiredItem);
+                                entryIterator.remove();
                             }
                         }
                     } else if (shipCargo.getItem(desiredItem.getName()) != null && shipCargo.getItem(desiredItem.getName()).getAmount() > 0) {
                         if (offeredPrice < desiredItem.getPrice()) {
                             logger.warn("Client Shop Sell| Offered price too low| Desired item: {}, Offered Price: {}", desiredItem, offeredPrice);
-                            unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+                            unattainedItems.add(desiredItem);
+                            entryIterator.remove();
                         }
                         else {
-                            double sellAmount = Math.min(shipCargo.getItem(desiredItem.getName()).getAmount(), desiredItem.getAmount());
+                            double sellAmount = Math.min(shipCargo.getItem(desiredItem.getName()).getAmount(), desiredItem.getAmount()*-1);
                             MarketAPIRequests.sell(desiredItem.getName(), sellAmount, clientID, uriMap.get("marketAPI"));
 
                             logger.info("Client Shop Sell| Selling {}, amount: {}, price: {}, profit: {}| Desired item: {}",
@@ -190,16 +201,17 @@ public class Client {
                         }
                     } else{
                         logger.warn("Client Shop Sell| No Cargo of item type to sell| Desired item: {}", desiredItem);
-                        unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+                        unattainedItems.add(desiredItem);
+                        entryIterator.remove();
                     }
                 }
                 else{
                     logger.warn("Client Shop| No Price of item type to sell, Item no available at Space Port| Desired item: {}", desiredItem);
-                    unattainedItems.add(shoppingList.removeListItem(desiredItem.getName()));
+                    unattainedItems.add(desiredItem);
+                    entryIterator.remove();
                 }
             }
             shoppingList.removeCompletedItems();
-            wait(1000);
         }
         return unattainedItems;
     }
@@ -215,8 +227,13 @@ public class Client {
     }
 
     public static String helpMessage(){
-        //TODO
-        return "TODO";
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Client Help:\n");
+        stringBuilder.append("Client shops at the Space Port to complete its shopping list\n");
+        stringBuilder.append("Flags:\n\t--help \t Returns help message\n" +
+                "\t--money, -m <money-value>\t Set Clients starting money, Default: 1000\n"+
+                "\t--id <client-id>\t Set Clients client-id, Default: \"1234\"\n");
+        return stringBuilder.toString();
     }
 
 
