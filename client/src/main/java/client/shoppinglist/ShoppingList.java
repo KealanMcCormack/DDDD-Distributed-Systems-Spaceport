@@ -3,8 +3,8 @@ package client.shoppinglist;
 import client.items.Item;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 public class ShoppingList {
 
@@ -45,14 +45,16 @@ public class ShoppingList {
     }
 
     public void removeCompletedItems(){
-        for (Item item: shoppingList.values()){
-            if (item == null || item.getAmount() == 0){
-                shoppingList.remove(item.getName());
-            }
-        }
+        shoppingList.entrySet()
+                .removeIf(
+                        entry -> (0 == entry.getValue().getAmount()));
     }
 
     public Collection<Item> getDesiredItems(){
         return shoppingList.values();
+    }
+
+    public Iterator<Map.Entry<String, Item>> getDesiredItemsIterator(){
+        return shoppingList.entrySet().iterator();
     }
 }
