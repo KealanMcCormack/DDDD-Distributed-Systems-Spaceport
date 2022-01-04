@@ -6,6 +6,7 @@ import messages.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -35,16 +36,16 @@ public class MarketApiController {
     private String inventoryPort;
 
     @Value("${priceMonitorHost}")
-    private static String priceMonitorHost;
+    private String priceMonitorHost;
 
     @Value("${priceMonitorPort}")
-    private static String priceMonitorPort;
+    private String priceMonitorPort;
 
     @Value("${orderHost}")
-    private static String orderHost;
+    private String orderHost;
 
     @Value("${orderPort}")
-    private static String orderPort;
+    private String orderPort;
 
     /**
      * Post Mapping for buying an item from the inventory. /buy
@@ -110,9 +111,9 @@ public class MarketApiController {
 
         double totalCost = price * amount;
 
-        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceMonitorHost, priceMonitorPort);
-        sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
-                new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
+        //priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceMonitorHost, priceMonitorPort);
+        //sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
+        //        new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
         return null;
     }
 
@@ -168,9 +169,9 @@ public class MarketApiController {
 
         double totalCost = price * amount;
 
-        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceHost, priceMonitorPort);
-        sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
-                        new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
+        //priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceHost, priceMonitorPort);
+        //sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
+        //                new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
         //Send to order fulfilment
         return null;
     }
@@ -249,9 +250,10 @@ public class MarketApiController {
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {
-            logger.info("Sending produt to have price adjusted: {}", product.getName());
+            logger.info("Market Item Price Adjust| item: {}, host: {}, port: {}", product.getName(), priceMonitorHost, priceMonitorPort);
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject("http://{hosts}:{ports}/monitor/pricechange", product, String.class, priceMonitorHost, priceMonitorPort);
+            HttpEntity<Product> request = new HttpEntity<>(product);
+            restTemplate.postForObject("http://{priceMonitorHost}:{priceMonitorPort}/monitor/pricechange", request, String.class, priceMonitorHost, priceMonitorPort);
 
 
         } catch(RestClientException e){
@@ -268,11 +270,12 @@ public class MarketApiController {
         try {
             logger.info("Sending order request: {}", orderRequest.getOrderId());
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject("http://{hosts}:{ports}/order/add", orderRequest, String.class, orderHost, orderPort);
+            HttpEntity<OrderRequest> request = new HttpEntity<>(orderRequest);
+            restTemplate.postForObject("http://{orderHost}:{orderPort}/order/add", request, String.class, orderHost, orderPort);
 
 
         } catch(RestClientException e){
-            logger.error("Failed to call price adjustment | RestClientException: {}", e.toString());
+            logger.error("Failed to call order add | RestClientException: {}", e.toString());
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e
             );

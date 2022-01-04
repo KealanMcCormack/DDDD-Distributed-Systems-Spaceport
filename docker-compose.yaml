@@ -55,19 +55,19 @@ services:
       PRICE_PORT: ${PRICE_PORT}
       PRICE_REDIS_HOST: ${PRICE_REDIS_HOST}
 
-  pricemonitor:
-    build: PriceMonitor
-    container_name: ${PRICE_MONITOR_HOST}
-    ports:
-      - ${PRICE_MONITOR_PORT}:${PRICE_MONITOR_PORT}
-    environment:
-      - PRICE_MONITOR_PORT=${PRICE_MONITOR_PORT}
+  #pricemonitor:
+  #  build: PriceMonitor
+  #  container_name: ${PRICE_MONITOR_HOST}
+  #  ports:
+  #    - ${PRICE_MONITOR_PORT}:${PRICE_MONITOR_PORT}
+  #  environment:
+  #    - PRICE_MONITOR_PORT=${PRICE_MONITOR_PORT}
 
-  mongodb:
-    image: mongo:5.0
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=AzureDiamond
-      - MONGO_INITDB_ROOT_PASSWORD=hunter2
+  #mongodb:
+  #  image: mongo:5.0
+  #  environment:
+  #    - MONGO_INITDB_ROOT_USERNAME=AzureDiamond
+  #    - MONGO_INITDB_ROOT_PASSWORD=hunter2
 
   redis-inventory:
     image: redis:latest
