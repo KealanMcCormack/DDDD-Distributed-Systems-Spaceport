@@ -1,7 +1,6 @@
 package com.buysell.market.Controller;
 
 import com.buysell.market.DataObjects.Item;
-import com.buysell.market.DataObjects.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,23 +21,24 @@ public class MarketApiController {
     private final Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
     @Value("${priceHost}")
-    private static String priceHost;
+    private String priceHost;
 
     @Value("${pricePort}")
-    private static String pricePort;
+    private String pricePort;
 
     @Value("${inventoryHost}")
-    private static String inventoryHost;
+    private String inventoryHost;
 
     @Value("${inventoryPort}")
-    private static String inventoryPort;
+    private String inventoryPort;
 
     /**
      * Post Mapping for buying an item from the inventory. /buy
+     *
      * @param item
-     * @return null
+     * @param customerID
+     * @return
      */
-    //Should take in customer id
     @PostMapping("/buy/{customerID}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     String buyItem(@RequestBody Item item, @PathVariable String customerID) {
@@ -62,7 +62,7 @@ public class MarketApiController {
             );
         }
 
-        double amount = itemAmount(item.getName());
+        double amount = itemAmount(item.getName(), inventoryHost, inventoryPort);
         if(amount < 0.0){
             logger.info("Market Buy| Requested item : {} doesn't exist in inventory", item.getName());
             throw new ResponseStatusException(
@@ -81,7 +81,7 @@ public class MarketApiController {
         }
 
         // Calculate total price
-        double price = itemPrice(item.getName());
+        double price = itemPrice(item.getName(), priceHost, pricePort);
         if(price < 0.0){
             logger.warn("Market Buy| Requested item : {}, no price available", item.getName());
             throw new ResponseStatusException(
@@ -92,7 +92,7 @@ public class MarketApiController {
         //Updating inventory database
         item.setAmount(item.getAmount()*-1);
 
-        itemAmountUpdate(item);
+        itemAmountUpdate(item, inventoryHost, inventoryPort);
 
         double totalCost = price * amount;
 
@@ -114,31 +114,31 @@ public class MarketApiController {
     @PostMapping("/sell/{customerID}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     String sellItem(@RequestBody Item item, @PathVariable String customerID) {
-        double price = itemPrice(item.getName());
-        double amount = itemAmount(item.getName());
+        double price = itemPrice(item.getName(), priceHost, pricePort);
+        double amount = itemAmount(item.getName(), inventoryHost, inventoryPort);
 
         if(item == null) {
-            logger.info("Market Buy| Requested item is null");
+            logger.info("Market Sell| Requested item is null");
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Invalid Item: null"
             );
         }
         if(item.getName() == null || item.getName().isEmpty()) {
-            logger.info("Market Buy| Requested item: {} is null", item.getName());
+            logger.info("Market Sell| Requested item: {} is null", item.getName());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Invalid Item name: \"" + item.getName() + "\""
             );
         }
 
         if(item.getAmount() <= 0.0){
-            logger.info("Market Buy| Requested item amount: {} is invalid", item.getAmount());
+            logger.info("Market Sell| Requested item amount: {} is invalid", item.getAmount());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Invalid Item amount: " + item.getAmount()
             );
         }
 
         if(price < 0.0){
-            logger.warn("Market Buy| Requested item : {}, no price available", item.getName());
+            logger.warn("Market Sell| Requested item : {}, no price available", item.getName());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Item Not Found: No Price available: \"" + item.getName() + "\""
             );
@@ -146,14 +146,14 @@ public class MarketApiController {
 
         //New item we don't recognise - what do
         if(amount < 0.0){
-            logger.info("Market Buy| Requested item : {} doesn't exist in inventory", item.getName());
+            logger.info("Market Sell| Requested item : {} doesn't exist in inventory", item.getName());
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Item Not Found: Item not carried Inventory: \"" + item.getName() + "\""
             );
         }
 
         //Updating inventory database
-        itemAmountUpdate(item);
+        itemAmountUpdate(item, inventoryHost, inventoryPort);
 
         double totalCost = price * amount;
 
@@ -167,13 +167,13 @@ public class MarketApiController {
      * @return double price
      */
 
-    private static double itemPrice(String itemName) throws ResponseStatusException{
+    private static double itemPrice(String itemName, String priceHost, String pricePort) throws ResponseStatusException{
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {
-            logger.info("Market Item Amount| item: {}", itemName);
+            logger.info("Market Item Amount| item: {}, host: {}, port: {}", itemName, priceHost, pricePort);
             RestTemplate restTemplate = new RestTemplate();
-            Double price = restTemplate.getForObject("http://{hosts}:{ports}/price/{itemName}", Double.class, priceHost, pricePort, itemName);
+            Double price = restTemplate.getForObject("http://{priceHost}:{pricePort}/price/{itemName}", Double.class, priceHost, pricePort, itemName);
 
             if (price == null){
                 price = -1.0;
@@ -193,13 +193,13 @@ public class MarketApiController {
      * @param itemName
      * @return double amount
      */
-    private static double itemAmount(String itemName)  throws ResponseStatusException{
+    private static double itemAmount(String itemName, String inventoryHost, String inventoryPort)  throws ResponseStatusException{
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {
-            logger.info("Market Item Amount| item: {}", itemName);
+            logger.info("Market Item Amount| item: {}, host: {}, port: {}", itemName, inventoryHost, inventoryPort);
             RestTemplate restTemplate = new RestTemplate();
-            Double amount = restTemplate.getForObject("http://{hosts}:{ports}/inventory/{itemName}", Double.class, inventoryHost, inventoryPort, itemName);
+            Double amount = restTemplate.getForObject("http://{inventoryHost}:{inventoryHost}/inventory/{itemName}", Double.class, inventoryHost, inventoryPort, itemName);
 
             if (amount == null){
                 amount = -1.0;
@@ -214,13 +214,13 @@ public class MarketApiController {
         }
     }
 
-    private static void itemAmountUpdate(Item item)  throws ResponseStatusException{
+    private static void itemAmountUpdate(Item item, String inventoryHost, String inventoryPort)  throws ResponseStatusException{
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {
-            logger.info("Market Item Amount Update| item: {}", item);
+            logger.info("Market Item Amount Update| item: {}, host: {}, port: {}", item, inventoryHost, inventoryPort);
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject("http://{hosts}:{ports}/inventory/update", item, String.class, inventoryHost, inventoryPort);
+            restTemplate.postForObject("http://{inventoryHost}:{inventoryPort}/inventory/update", item, String.class, inventoryHost, inventoryPort);
 
 
         } catch(RestClientException e){
