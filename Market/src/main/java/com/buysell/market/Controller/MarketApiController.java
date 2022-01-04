@@ -1,6 +1,7 @@
 package com.buysell.market.Controller;
 
 import com.buysell.market.DataObjects.Item;
+import messages.OrderRequest;
 import messages.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/market")
 public class MarketApiController {
     private final Logger logger = LoggerFactory.getLogger(MarketApiController.class);
-
+    private int orderId = 0;
     @Value("${priceHost}")
     private String priceHost;
 
@@ -38,6 +39,12 @@ public class MarketApiController {
 
     @Value("${PriceMonitorPort}")
     private static String priceMonitorPort;
+
+    @Value("${OrderHost}")
+    private static String orderHost;
+
+    @Value("${OrderPort}")
+    private static String orderPort;
 
     /**
      * Post Mapping for buying an item from the inventory. /buy
@@ -104,6 +111,8 @@ public class MarketApiController {
         double totalCost = price * amount;
 
         priceMonitor(new Product(item.getName(), item.getAmount(), totalCost));
+        sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
+                new Product(item.getName(), item.getAmount(), totalCost)));
         //Send Order to order fulfilment ( Order Request from core )
 
         //Order Id should be safe, as this application can be distributed
@@ -165,7 +174,8 @@ public class MarketApiController {
         double totalCost = price * amount;
 
         priceMonitor(new Product(item.getName(), item.getAmount(), totalCost));
-
+        sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
+                        new Product(item.getName(), item.getAmount(), totalCost)));
         //Send to order fulfilment
         return null;
     }
@@ -247,6 +257,23 @@ public class MarketApiController {
             logger.info("Sending produt to have price adjusted: {}", product.getName());
             RestTemplate restTemplate = new RestTemplate();
             restTemplate.postForObject("http://{hosts}:{ports}/monitor/pricechange", product, String.class, priceMonitorHost, priceMonitorPort);
+
+
+        } catch(RestClientException e){
+            logger.error("Failed to call price adjustment | RestClientException: {}", e.toString());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e
+            );
+        }
+    }
+
+    private static void sendOrderRequest(OrderRequest orderRequest){
+        Logger logger = LoggerFactory.getLogger(MarketApiController.class);
+
+        try {
+            logger.info("Sending order request: {}", orderRequest.getOrderId());
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.postForObject("http://{hosts}:{ports}/order/add", orderRequest, String.class, orderHost, orderPort);
 
 
         } catch(RestClientException e){

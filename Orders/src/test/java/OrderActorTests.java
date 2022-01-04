@@ -1,4 +1,4 @@
-import actor.OrderActor;
+import com.actor.OrderActor;
 import org.junit.Before;
 import org.junit.Test;
 
