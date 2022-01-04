@@ -12,11 +12,16 @@ services:
   market:
     build: ./Market
     image: market:latest
-    container_name: market
+    container_name: ${MARKET_HOST}
     ports:
-      - "8084:8084"
-    expose:
-      - 8084
+      - ${MARKET_PORT}:${MARKET_PORT}
+    environment:
+      PRICE_HOST: ${PRICE_HOST}
+      PRICE_PORT: ${PRICE_PORT}
+      INVENTORY_HOST: ${INVENTORY_HOST}
+      INVENTORY_PORT: ${INVENTORY_PORT}
+      MARKET_PORT: ${MARKET_PORT}
+
 
   orders:
     build: ./Orders
@@ -30,19 +35,16 @@ services:
 
   inventory-api:
     build: InventoryApi
-    container_name: inventory-api
+    container_name: ${INVENTORY_HOST}
     ports:
-      - "8081:8081"
-    expose:
-      - 8081
+      - ${INVENTORY_PORT}:${INVENTORY_PORT}
+
 
   price-api:
     build: PriceApi
-    container_name: price-api
+    container_name: ${PRICE_HOST}
     ports:
-      - "8080:8080"
-    expose:
-      - 8080
+      - ${PRICE_PORT}:${PRICE_PORT}
 
   mongodb:
     image: mongo:5.0
