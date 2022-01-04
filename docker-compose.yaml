@@ -57,9 +57,9 @@ services:
 
   pricemonitor:
     build: PriceMonitor
-    container_name: price-monitor
+    container_name: ${PRICE_MONITOR_HOST}
     ports:
-      - "9000:9000"
+      - ${PRICE_MONITOR_PORT}:${PRICE_MONITOR_PORT}
 
   mongodb:
     image: mongo:5.0
