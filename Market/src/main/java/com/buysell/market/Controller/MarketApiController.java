@@ -4,6 +4,7 @@ import com.buysell.market.DataObjects.Item;
 import com.buysell.market.DataObjects.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
@@ -20,8 +21,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class MarketApiController {
     private final Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
-    //Notes
-    // Careful about localhosts - for the moment Price is 8080, inventory is 8081
+    @Value("${priceHost}")
+    private static String priceHost;
+
+    @Value("${pricePort}")
+    private static String pricePort;
+
+    @Value("${inventoryHost}")
+    private static String inventoryHost;
+
+    @Value("${inventoryPort}")
+    private static String inventoryPort;
 
     /**
      * Post Mapping for buying an item from the inventory. /buy
@@ -163,7 +173,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount| item: {}", itemName);
             RestTemplate restTemplate = new RestTemplate();
-            Double price = restTemplate.getForObject("http://localhost:8080/price/{itemName}", Double.class, itemName);
+            Double price = restTemplate.getForObject("http://{hosts}:{ports}/price/{itemName}", Double.class, priceHost, pricePort, itemName);
 
             if (price == null){
                 price = -1.0;
@@ -189,7 +199,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount| item: {}", itemName);
             RestTemplate restTemplate = new RestTemplate();
-            Double amount = restTemplate.getForObject("http://localhost:8081/inventory/{itemName}", Double.class, itemName);
+            Double amount = restTemplate.getForObject("http://{hosts}:{ports}/inventory/{itemName}", Double.class, inventoryHost, inventoryPort, itemName);
 
             if (amount == null){
                 amount = -1.0;
@@ -202,8 +212,6 @@ public class MarketApiController {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e
             );
         }
-
-
     }
 
     private static void itemAmountUpdate(Item item)  throws ResponseStatusException{
@@ -212,7 +220,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount Update| item: {}", item);
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject("http://localhost:8081/inventory/update", item, String.class);
+            restTemplate.postForObject("http://{hosts}:{ports}/inventory/update", item, String.class, inventoryHost, inventoryPort);
 
 
         } catch(RestClientException e){
@@ -221,9 +229,5 @@ public class MarketApiController {
                     HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", e
             );
         }
-
-
     }
-
-
 }
