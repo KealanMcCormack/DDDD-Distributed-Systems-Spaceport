@@ -33,8 +33,11 @@ receipts are sent to the ship captains.
 6. Run Client by "java -Duser.language=en -Duser.country=IE -jar client/target/client-0.0.1.jar -m {money} --id {clientID}
 7. Run "docker-compose down" to shut down docker containers
 
-##Notes
+## Notes
     Configuration for Services is done through the .env
+    
+    There is a parser in the core module which can be run as a script to add
+    items to the inventory and price databases
 
 
 ## Open Api Code
