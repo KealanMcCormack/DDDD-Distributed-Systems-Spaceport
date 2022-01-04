@@ -110,14 +110,9 @@ public class MarketApiController {
 
         double totalCost = price * amount;
 
-        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost));
+        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceMonitorHost, priceMonitorPort);
         sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
-                new Product(item.getName(), item.getAmount(), totalCost)));
-        //Send Order to order fulfilment ( Order Request from core )
-
-        //Order Id should be safe, as this application can be distributed
-
-
+                new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
         return null;
     }
 
@@ -173,9 +168,9 @@ public class MarketApiController {
 
         double totalCost = price * amount;
 
-        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost));
+        priceMonitor(new Product(item.getName(), item.getAmount(), totalCost), priceHost, priceMonitorPort);
         sendOrderRequest(new OrderRequest(Integer.toString(orderId++), customerID,
-                        new Product(item.getName(), item.getAmount(), totalCost)));
+                        new Product(item.getName(), item.getAmount(), totalCost)), orderHost, orderPort);
         //Send to order fulfilment
         return null;
     }
@@ -250,7 +245,7 @@ public class MarketApiController {
         }
     }
 
-    private static void priceMonitor(Product product){
+    private static void priceMonitor(Product product, String priceMonitorHost, String priceMonitorPort){
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {
@@ -267,7 +262,7 @@ public class MarketApiController {
         }
     }
 
-    private static void sendOrderRequest(OrderRequest orderRequest){
+    private static void sendOrderRequest(OrderRequest orderRequest, String orderHost, String orderPort){
         Logger logger = LoggerFactory.getLogger(MarketApiController.class);
 
         try {

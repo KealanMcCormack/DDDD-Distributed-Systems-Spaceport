@@ -1,6 +1,0 @@
-- [x] MongoDB Database
-  - [ ] Tests
-- [x] Actor System to talk between services
-    - [x] Receive Order & Create Transaction
-        - [x] put into DB (REST)
-    - [ ] Handle currency

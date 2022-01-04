@@ -26,17 +26,15 @@ services:
       ORDER_HOST: ${ORDER_HOST}
       ORDER_PORT: ${ORDER_PORT}
 
-
-
-  orders:
-    build: ./Orders
-    image: orders:latest
-    container_name: orders
-    ports:
-      - "8082:8082"
-      - "3000:3000"
-    environment:
-      - MONGODB_CONNSTRING=mongodb://AzureDiamond:hunter2@mongodb
+  #orders:
+  #  build: ./Orders
+  #  image: orders:latest
+  #  container_name: orders
+  #  ports:
+  #    - "8082:8082"
+  #    - "3000:3000"
+  #  environment:
+  #    - MONGODB_CONNSTRING=mongodb://AzureDiamond:hunter2@mongodb
 
   inventory-api:
     build: InventoryApi
