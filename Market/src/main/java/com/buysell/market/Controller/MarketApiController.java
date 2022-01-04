@@ -30,7 +30,8 @@ public class MarketApiController {
      */
     //Should take in customer id
     @PostMapping("/buy/{customerID}")
-    String buyItem(@RequestBody Item item, @PathVariable int customerID) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    String buyItem(@RequestBody Item item, @PathVariable String customerID) {
 
         if(item == null) {
             logger.info("Market Buy| Requested item is null");
@@ -101,11 +102,12 @@ public class MarketApiController {
      */
     //Take customer id
     @PostMapping("/sell/{customerID}")
-    String sellItem(@RequestBody Item item, @PathVariable int customerID) {
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    String sellItem(@RequestBody Item item, @PathVariable String customerID) {
         double price = itemPrice(item.getName());
         double amount = itemAmount(item.getName());
 
-        if(item == null){
+        if(item == null) {
             logger.info("Market Buy| Requested item is null");
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Invalid Item: null"
@@ -161,7 +163,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount| item: {}", itemName);
             RestTemplate restTemplate = new RestTemplate();
-            Double price = restTemplate.getForObject("http://price-api:8080/price/{itemName}", Double.class, itemName);
+            Double price = restTemplate.getForObject("http://localhost:8080/price/{itemName}", Double.class, itemName);
 
             if (price == null){
                 price = -1.0;
@@ -187,7 +189,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount| item: {}", itemName);
             RestTemplate restTemplate = new RestTemplate();
-            Double amount = restTemplate.getForObject("http://inventory-api:8081/inventory/{itemName}", Double.class, itemName);
+            Double amount = restTemplate.getForObject("http://localhost:8081/inventory/{itemName}", Double.class, itemName);
 
             if (amount == null){
                 amount = -1.0;
@@ -210,7 +212,7 @@ public class MarketApiController {
         try {
             logger.info("Market Item Amount Update| item: {}", item);
             RestTemplate restTemplate = new RestTemplate();
-            restTemplate.postForObject("http://inventory-api:8081/inventory/update", item, String.class);
+            restTemplate.postForObject("http://localhost:8081/inventory/update", item, String.class);
 
 
         } catch(RestClientException e){

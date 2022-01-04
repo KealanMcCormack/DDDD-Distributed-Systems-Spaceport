@@ -32,7 +32,7 @@ public class TransactionDatabase {
 
     public void insert(OrderRequest orderRequest){
         MongoCollection<Document> transactionsCollection = db.getCollection("Transactions");
-        Document document = new Document(orderRequest.orderId, orderRequest);
+        Document document = new Document(orderRequest.getOrderId(), orderRequest);
         transactionsCollection.insertOne(document);
     }
 
